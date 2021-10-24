@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3de8945cc2b124fa79957d7531cace33, type: 3}
+  m_Name: Saber1Data
+  m_EditorClassIdentifier: 
+  saberPrefab: {fileID: 3240879551572071350, guid: a5dd20859849d664f8f5cfcd7d1d1815, type: 3}
+  sliderMinRotation: {x: 90, y: 0, z: 0}
+  sliderMaxRotation: {x: 0, y: 0, z: 0}
+  isSaber1: 1
