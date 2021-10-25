@@ -15,8 +15,14 @@ public class SaberClashParticlesHandler : MonoBehaviour
         SaberManager.Instance.CollisionEvent -= ShowParticles;
     }
 
-    void ShowParticles()
+    /// <summary>
+    /// Move particles to the position of contact.
+    /// Can be modified to change the angle of the particles if needed.
+    /// </summary>
+    /// <param name="contact"></param>
+    void ShowParticles(ContactPoint contact)
     {
+        transform.position = contact.point;
         for (int i = 0; i < transform.childCount; i++)
         {
             transform.GetChild(i).GetComponent<ParticleSystem>().Play();

@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class SwingAnimation : MonoBehaviour, ISimulationAnimation
+public class SwingAnimation : MonoBehaviour
 {
     [SerializeField] private float xMinAngle = 0;
     [SerializeField] private float xMaxAngle = 0;
@@ -13,26 +13,53 @@ public class SwingAnimation : MonoBehaviour, ISimulationAnimation
     [SerializeField] private float zMinAngle = 0;
     [SerializeField] private float zMaxAngle = 0;
     [SerializeField] private AnimationCurve zCurve;
+    
+    private bool _isPlaying;
 
-    public void PlayAnimation(float duration)
+    private void OnEnable()
     {
-        StartCoroutine(Swing(duration));
+        SaberManager.Instance.StartSimulationEvent += PlayAnimation;
+        SaberManager.Instance.CollisionEvent += StopAnimation;
+    }
+
+    private void OnDisable()
+    {
+        SaberManager.Instance.StartSimulationEvent += PlayAnimation;
+        SaberManager.Instance.CollisionEvent -= StopAnimation;
+    }
+
+    public void PlayAnimation()
+    {
+        _isPlaying = true;
+        StartCoroutine(Swing(SaberManager.Instance.animationDuration));
+    }
+
+    private void StopAnimation(ContactPoint contact)
+    {
+        _isPlaying = false;
     }
 
     IEnumerator Swing(float duration)
     {
         float elapsedTime = 0;
-        while (elapsedTime < duration)
+        while (_isPlaying && elapsedTime < duration)
         {
             elapsedTime += Time.deltaTime;
             var progress = Mathf.Clamp01(elapsedTime / duration);
             var xRotation = Mathf.Lerp(xMinAngle, xMaxAngle, xCurve.Evaluate(progress));
             var yRotation = Mathf.Lerp(yMinAngle, yMaxAngle, yCurve.Evaluate(progress));
             var zRotation = Mathf.Lerp(zMinAngle, zMaxAngle, zCurve.Evaluate(progress));
-            Debug.Log(string.Format("x: {0} y: {1} z: {2}", xRotation.ToString(), yRotation.ToString(), zRotation.ToString()));
-            transform.rotation = Quaternion.Euler(xRotation, yRotation, zRotation);
-            Debug.Break();
+            transform.localRotation = Quaternion.Euler(xRotation, yRotation, zRotation);
             yield return null;
+        }
+
+        if (!SaberManager.Instance.resetAfterSimulation) yield break;
+        {
+            yield return new WaitForSeconds(SaberManager.Instance.resetDelay);
+            var xRotation = Mathf.Lerp(xMinAngle, xMaxAngle, xCurve.Evaluate(0));
+            var yRotation = Mathf.Lerp(yMinAngle, yMaxAngle, yCurve.Evaluate(0));
+            var zRotation = Mathf.Lerp(zMinAngle, zMaxAngle, zCurve.Evaluate(0));
+            transform.localRotation = Quaternion.Euler(xRotation, yRotation, zRotation);
         }
     }
 }
