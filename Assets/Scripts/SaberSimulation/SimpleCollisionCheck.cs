@@ -3,8 +3,6 @@ using UnityEngine;
 
 public class SimpleCollisionCheck : MonoBehaviour
 {
-    [SerializeField] private float collisionAngle;
-
     private void OnTriggerEnter(Collider other)
     {
         Debug.Log("TriggerEnter");
